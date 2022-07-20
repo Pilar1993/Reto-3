@@ -76,8 +76,8 @@ public class UserMenu extends javax.swing.JFrame{
     
     public void listarEmpleados(){
 	String filtroBusqueda = txtSearch.getText();
-	if (filtroBusqueda.isEmpty()){
-	    String queryConsulta = "SELECT * FROM empleado";
+	if ("".equals(txtSearch.getText())){
+	    String queryConsulta = "SELECT * FROM empleados";
 
 	    try {
 		connection = conexion.getConnection();
@@ -93,18 +93,17 @@ public class UserMenu extends javax.swing.JFrame{
 		    empleados[3] = rs.getString("tipoDocumento");
 		    empleados[4] = rs.getString("documento");
 		    empleados[5] = rs.getString("correo");
-		    //
+		        //
 		    contenidoTablaEmpleados.addRow(empleados);
 		    System.out.println("id: " + empleados[0] + ", nombre: " + empleados[1] + " " + ",apellidos: " + empleados[2] + ",tipoDocumento: " + empleados[3] + ",documento: " + empleados[4] + ",correo: " + empleados[5]);
 		    tblEmpleados.setModel(contenidoTablaEmpleados);
 		}
 	    } catch (SQLException e) {
-		System.out.println("Error");
+		System.out.println("Error en mostrar");
 	    }
 	} else {
-	    String queryConsulta = "SELECT * FROM empleado WHERE nombreEmp LIKE '%"+filtroBusqueda+"%' OR apellidos LIKE '%"+filtroBusqueda+"%'";
+	    String queryConsulta = "SELECT * FROM empleados WHERE nombreEmp LIKE '%"+filtroBusqueda+"%' OR apellidos LIKE '%"+filtroBusqueda+"%'";
 	    System.out.println(queryConsulta);
-	    
 	    try {
 		connection = conexion.getConnection();
 		st = connection.createStatement();
@@ -200,6 +199,12 @@ public class UserMenu extends javax.swing.JFrame{
         jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel7.setText("Nombre:");
 
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchActionPerformed(evt);
+            }
+        });
+
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/Buscar.png"))); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -239,7 +244,7 @@ public class UserMenu extends javax.swing.JFrame{
                 .addContainerGap()
                 .addGroup(empleadosTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(empleadosTabLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, empleadosTabLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -249,9 +254,9 @@ public class UserMenu extends javax.swing.JFrame{
                         .addGroup(empleadosTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, empleadosTabLayout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(164, 164, 164)
+                                .addGap(97, 97, 97)
                                 .addComponent(jLabel5)
-                                .addGap(0, 211, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(empleadosTabLayout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(btnAddUser)))
@@ -268,11 +273,9 @@ public class UserMenu extends javax.swing.JFrame{
             empleadosTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(empleadosTabLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(empleadosTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(empleadosTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2)
-                    .addGroup(empleadosTabLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jLabel5)))
+                    .addComponent(jLabel5))
                 .addGap(36, 36, 36)
                 .addComponent(jLabel6)
                 .addGroup(empleadosTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -486,7 +489,7 @@ public class UserMenu extends javax.swing.JFrame{
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Sucursales", sucursalesTab);
@@ -495,7 +498,9 @@ public class UserMenu extends javax.swing.JFrame{
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -705,15 +710,16 @@ public class UserMenu extends javax.swing.JFrame{
         int row = tblDepartamentos.getSelectedRow();
 	System.out.println(row);
 	String sucursal = (tblDepartamentos.getValueAt(row, 0).toString());
-	String querySucursal = "SELECT idSucursal FROM `sucursal` WHERE nombreSucursal = '"+sucursal+"';";
+	String querySucursal = "SELECT idSucursal FROM sucursal WHERE nombreSucursal = '"+sucursal+"';";
 	try {
 	    connection = conexion.getConnection();
 	    st = connection.createStatement();
-	    st.executeQuery(querySucursal);
+	    rs = st.executeQuery(querySucursal);
 	    while(rs.next()){
 		int idSucursal = rs.getInt("idSucursal");
 		EmpleadoForm empleadoForm = new EmpleadoForm(this, true);
 		empleadoForm.setVisible(true);
+		this.setVisible(false);
 		empleadoForm.recibeIdSucursal(idSucursal);
 	    }
 	} catch (SQLException e) {
@@ -722,6 +728,10 @@ public class UserMenu extends javax.swing.JFrame{
 	System.out.println(querySucursal);    
 	
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchActionPerformed
 
     /**
      * @param args the command line arguments
